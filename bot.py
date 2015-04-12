@@ -66,7 +66,9 @@ def on_mode_raw(message):
                    challenges[carg] = {}
                 challenges[carg][response] = chan
                 logger.warn("DEOPPED {}".format(carg))
-                bot.say(carg, "FCHALLENGE {} {}".format(chan, response))
+                if carg != bot.nickname:
+                    bot.say(carg, "FCHALLENGE {} {}".format(chan, response))
+                    logger.warn("FORCE CHALLENGING")
 
 @bot.on("public-message")
 def on_pubmsg(message, user, target, text):
