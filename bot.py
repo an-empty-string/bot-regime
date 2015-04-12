@@ -49,15 +49,23 @@ def on_addressed(message, user, target, text):
 
 @bot.on("irc-mode")
 def on_mode_raw(message):
-    print(message.params)
+    if not message.params[1].startswith("#"):
+        return
     chan, modes, args = message.params[1], message.params[2], message.params[3:]
-    for arg in args:
-        if arg.startswith(config.prefix):
-            challenge, response = generate_challenge(arg)
-            if arg not in challenges:
-                challenges[arg] = {}
-            challenges[arg][response] = chan
-            bot.say(arg, "FCHALLENGE {} {}".format(chan, response))
+    cstr = "+"
+    for mode in modes:
+        if mode in "-+":
+            cstr = mode
+            continue
+        if mode in "bolkj":
+            carg = args.pop(0)
+        if mode == "o" and cstr == "-":
+            if arg.startswith(config.prefix):
+                challenge, response = generate_challenge(arg)
+                if arg not in challenges:
+                   challenges[arg] = {}
+                challenges[arg][response] = chan
+                bot.say(arg, "FCHALLENGE {} {}".format(chan, response))
 
 @bot.on("public-message")
 def on_pubmsg(message, user, target, text):
@@ -110,7 +118,6 @@ def on_join(message, user, channel):
 
 @bot.on("private-message")
 def on_message(message, user, target, text):
-    logger.info("got a message")
     response = text
     if user.nick in challenges and response in challenges[user.nick]:
         chan = challenges[user.nick][response]
@@ -120,7 +127,7 @@ def on_message(message, user, target, text):
         bot.say(user.nick, "COMPLETE {} {}".format(chan, completestr(user.nick, chan)))
     elif text.startswith("FCHALLENGE "):
         chan, text = text.replace("FCHALLENGE ", "").split()
-        logger.info("got force challenge from {}, responding".format(user.nick))
+        logger.warn("got force challenge from {}, responding".format(user.nick))
         bot.say(user.nick, hashlib.sha1("{}{}{}".format(text, config.key, target).encode()).hexdigest())
     elif text.startswith("CHALLENGE "):
         chan, text = text.replace("CHALLENGE ", "").split()
