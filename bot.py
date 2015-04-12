@@ -5,6 +5,8 @@ import config
 import hashlib
 import logging
 import string
+import os
+import sys
 import random
 logger = logging.getLogger("czarbot")
 logging.basicConfig(level=logging.INFO)
@@ -69,6 +71,12 @@ def on_pubmsg(message, user, target, text):
             f.write("\n".join(config.channels))
         bot.part(channel)
         bot.say(target, "ok")
+    if command == "pull":
+        os.system("git pull")
+        quitdelay = random.randint(0, 60)
+        bot.say(target, "ok, waiting {} seconds to restart".format(quitdelay))
+        time.sleep(quitdelay)
+        bot.writeln("QUIT :restart triggered")
 
 @bot.on("join")
 def on_join(message, user, channel):
