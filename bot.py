@@ -15,7 +15,8 @@ logger = logging.getLogger("czarbot")
 logging.basicConfig(level=logging.INFO)
 
 bot = irc.connect(config.host)
-bot.register(config.prefix + str(random.randint(10**6, 10**7 - 1)), "regime", "bot regime")
+nick = config.prefix + str(random.randint(10**4, 10**5 - 1))
+bot.register(nick, "regime", "bot regime")
 
 @bot.on("irc-001")
 def join_stuff(message):
@@ -76,7 +77,7 @@ def on_pubmsg(message, user, target, text):
         bot.say(target, "ok")
     if command == "pull":
         os.system("git pull")
-        quitdelay = random.randint(0, 300)
+        quitdelay = random.randint(0, 180)
         bot.say(target, "ok, waiting {} seconds to restart".format(quitdelay))
         time.sleep(quitdelay)
         asyncio.get_event_loop().call_later(quitdelay, functools.partial(bot.writeln, "QUIT :restart triggered"))
