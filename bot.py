@@ -65,7 +65,7 @@ def on_mode_raw(message):
                 if carg not in challenges:
                    challenges[carg] = {}
                 challenges[carg][response] = chan
-                bot.warn("DEOPPED {}".format(carg))
+                logger.warn("DEOPPED {}".format(carg))
                 bot.say(carg, "FCHALLENGE {} {}".format(chan, response))
 
 @bot.on("public-message")
