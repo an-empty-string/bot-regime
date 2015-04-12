@@ -55,7 +55,7 @@ def on_message(message, user, target, text):
         bot.say(user.nick, hashlib.sha1("{}{}{}".format(text, config.key, target).encode()).hexdigest())
     if text.startswith("COMPLETE "):
         chan, text = text.replace("COMPLETE ", "").split()
-        if text == compeltestr(target, chan):
+        if text == completestr(target, chan):
             done.append(chan)
 
 import asyncio
