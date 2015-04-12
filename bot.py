@@ -14,7 +14,7 @@ bot.register(config.prefix + str(random.randint(10**6, 10**7 - 1)), "regime", "b
 @bot.on("irc-001")
 def join_stuff(message):
     logger.info("autojoining channels")
-    bot.join("#testing")
+    bot.join(config.channels)
 
 def generate_challenge(nick):
     challenge = "".join([random.choice(string.ascii_lowercase) for i in range(40)])
