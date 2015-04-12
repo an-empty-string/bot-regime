@@ -121,8 +121,10 @@ def on_message(message, user, target, text):
         chan, text = text.replace("FCHALLENGE ", "").split()
         logger.info("got force challenge from {}, responding".format(user.nick))
         bot.say(user.nick, hashlib.sha1("{}{}{}".format(text, config.key, target).encode()).hexdigest())
-    elif text.startswith("CHALLENGE ") and chan not in done:
+    elif text.startswith("CHALLENGE "):
         chan, text = text.replace("CHALLENGE ", "").split()
+        if chan in done:
+            return
         logger.info("got challenge from {}, responding".format(user.nick))
         bot.say(user.nick, hashlib.sha1("{}{}{}".format(text, config.key, target).encode()).hexdigest())
     elif text.startswith("COMPLETE "):
