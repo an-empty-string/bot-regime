@@ -10,7 +10,9 @@ logger = logging.getLogger("czarbot")
 logging.basicConfig(level=logging.INFO)
 
 bot = irc.connect(config.host)
-bot.register(config.prefix + str(random.randint(10**6, 10**7 - 1)), "regime", "bot regime")
+nickname = config.prefix + str(random.randint(10**6, 10**7 - 1))
+print("My nickname is:", nickname)
+bot.register(nickname, "regime", "bot regime")
 
 @bot.on("irc-001")
 def join_stuff(message):
