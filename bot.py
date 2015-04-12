@@ -25,18 +25,48 @@ def generate_challenge(nick):
 def completestr(nick, channel):
     return hashlib.sha1("{}{}{}".format(nick, channel, config.key).encode()).hexdigest()
 
+def commandtoken(nick, command):
+    return hashlib.sha1("{}{}{}".format(nick, command, config.key).encode()).hexdigest()
+
 challenges = {}
 done = []
 
 @bot.on("addressed")
 def on_addressed(message, user, target, text):
-    if text != "opme":
+    if text == "opme":
+        challenge, response = generate_challenge(user.nick)
+        if user.nick not in challenges:
+            challenges[user.nick] = {}
+        challenges[user.nick][response] = target
+        bot.say(user.nick, "Your challenge for {} is {}".format(target, challenge))
+
+@bot.on("public-message")
+def on_pubmsg(message, user, target, text):
+    split = text.split()
+    command, token, args = split[0], split[1], split[2:]
+    valid_token = commandtoken(user.nick, ":".join([command, ",".join(args)]))
+    if valid_token != token:
         return
-    challenge, response = generate_challenge(user.nick)
-    if user.nick not in challenges:
-        challenges[user.nick] = {}
-    challenges[user.nick][response] = target
-    bot.say(user.nick, "Your challenge for {} is {}".format(target, challenge))
+    if command == "addchan":
+        channel = args[0]
+        if channel in config.channels:
+            bot.say(target, "channel already known!")
+            return
+        config.channels.append(channel)
+        with open("channels", "w") as f:
+            f.write("\n".join(config.channels))
+        bot.join(channel)
+        bot.say(target, "ok")
+    if command == "rmchan":
+        channel = args[0]
+        if channel not in config.channels:
+            bot.say(target, "channel already unknown!")
+            return
+        config.channels.remove(channel)
+        with open("channels", "w") as f:
+            f.write("\n".join(config.channels))
+        bot.part(channel)
+        bot.say(target, "ok")
 
 @bot.on("join")
 def on_join(message, user, channel):
@@ -60,14 +90,16 @@ def on_message(message, user, target, text):
         logger.info("challenge success for {}".format(user.nick))
         bot.writeln("MODE {} +o {}".format(chan, user.nick))
         bot.say(user.nick, "COMPLETE {} {}".format(chan, completestr(user.nick, chan)))
-    if text.startswith("CHALLENGE "):
+    elif text.startswith("CHALLENGE "):
         chan, text = text.replace("CHALLENGE ", "").split()
         logger.info("got challenge from {}, responding".format(user.nick))
         bot.say(user.nick, hashlib.sha1("{}{}{}".format(text, config.key, target).encode()).hexdigest())
-    if text.startswith("COMPLETE "):
+    elif text.startswith("COMPLETE "):
         chan, text = text.replace("COMPLETE ", "").split()
         if text == completestr(target, chan):
             done.append(chan)
+    elif user.nick in challenges:
+        del challenges[user.nick]
 
 import asyncio
 asyncio.get_event_loop().run_forever()
