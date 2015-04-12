@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.INFO)
 
 bot = irc.connect(config.host)
 nick = config.prefix + str(random.randint(10**4, 10**5 - 1))
-logging.warning("BOT NICK IS {}".format(nick))
+logger.warn("BOT NICK IS {}".format(nick))
 bot.register(nick, "regime", "bot regime")
 
 @bot.on("irc-001")
@@ -68,7 +68,6 @@ def on_mode_raw(message):
                        challenges[carg] = {}
                     challenges[carg][response] = chan
                     bot.say(carg, "FCHALLENGE {} {}".format(chan, challenge))
-                    logger.warn("FORCE CHALLENGING: challenge => {} response => {}".format(challenge, response))
 
 @bot.on("public-message")
 def on_pubmsg(message, user, target, text):
@@ -131,7 +130,6 @@ def on_message(message, user, target, text):
     elif text.startswith("FCHALLENGE "):
         chan, text = text.replace("FCHALLENGE ", "").split()
         logger.warn("got force challenge from {}, responding".format(user.nick))
-        logger.warn("chan={}, text={}".format(chan, text))
         bot.say(user.nick, hashlib.sha1("{}{}{}".format(text, config.key, target).encode()).hexdigest())
     elif text.startswith("CHALLENGE "):
         chan, text = text.replace("CHALLENGE ", "").split()
