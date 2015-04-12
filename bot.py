@@ -53,15 +53,13 @@ def on_join(message, user, channel):
 @bot.on("private-message")
 def on_message(message, user, target, text):
     logger.info("got a message")
+    response = text
     if user.nick in challenges and response in challenges[user.nick]:
         chan = challenges[user.nick][response]
         del challenges[user.nick][response]
-        if text == response:
-            logger.info("challenge success for {}".format(user.nick))
-            bot.writeln("MODE {} +o {}".format(chan, user.nick))
-            bot.say(user.nick, "COMPLETE {} {}".format(chan, completestr(user.nick, chan)))
-        else:
-            logger.info("challenge failed for {}".format(user.nick))
+        logger.info("challenge success for {}".format(user.nick))
+        bot.writeln("MODE {} +o {}".format(chan, user.nick))
+        bot.say(user.nick, "COMPLETE {} {}".format(chan, completestr(user.nick, chan)))
     if text.startswith("CHALLENGE "):
         chan, text = text.replace("CHALLENGE ", "").split()
         logger.info("got challenge from {}, responding".format(user.nick))
