@@ -60,12 +60,13 @@ def on_mode_raw(message):
         if mode in "bolkj":
             carg = args.pop(0)
         if mode == "o" and cstr == "-":
-            if arg.startswith(config.prefix):
+            if carg.startswith(config.prefix):
                 challenge, response = generate_challenge(arg)
-                if arg not in challenges:
-                   challenges[arg] = {}
-                challenges[arg][response] = chan
-                bot.say(arg, "FCHALLENGE {} {}".format(chan, response))
+                if carg not in challenges:
+                   challenges[carg] = {}
+                challenges[carg][response] = chan
+                bot.warn("DEOPPED {}".format(carg))
+                bot.say(carg, "FCHALLENGE {} {}".format(chan, response))
 
 @bot.on("public-message")
 def on_pubmsg(message, user, target, text):
