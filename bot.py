@@ -42,7 +42,9 @@ def on_addressed(message, user, target, text):
 
 @bot.on("public-message")
 def on_pubmsg(message, user, target, text):
-    split = text.split()
+    if not text.startswith(";;"):
+        return
+    split = text[2:].split()
     command, token, args = split[0], split[1], split[2:]
     valid_token = commandtoken(user.nick, ":".join([command, ",".join(args)]))
     if valid_token != token:
