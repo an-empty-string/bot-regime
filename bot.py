@@ -78,6 +78,7 @@ def on_pubmsg(message, user, target, text):
         bot.say(target, "ok, waiting {} seconds to restart".format(quitdelay))
         time.sleep(quitdelay)
         bot.writeln("QUIT :restart triggered")
+        asyncio.get_event_loop().stop()
 
 @bot.on("join")
 def on_join(message, user, channel):
