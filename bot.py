@@ -42,7 +42,7 @@ def on_message(message, user, target, text):
     logger.info("got a message")
     if user.nick in challenges:
         chan, response = challenges[user.nick]
-        del challenges[user.nick]))
+        del challenges[user.nick]
         if text == response:
             logger.info("challenge success for {}".format(user.nick))
             bot.writeln("MODE {} +o {}".format(chan, user.nick))
