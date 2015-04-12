@@ -49,8 +49,7 @@ def on_addressed(message, user, target, text):
 
 @bot.on("irc-mode")
 def on_mode_raw(message):
-    print(message)
-    if not message.params[1].startswith("#"):
+    if not message.params[0].startswith("#"):
         return
     chan, modes, args = message.params[0], message.params[1], message.params[2:]
     cstr = "+"
