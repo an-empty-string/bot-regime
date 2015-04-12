@@ -1,4 +1,5 @@
 from asyncirc import irc
+import asyncirc.plugins.addressed
 
 import config
 import hashlib
@@ -26,6 +27,14 @@ def completestr(nick, channel):
 
 challenges = {}
 done = []
+
+@bot.on("addressed")
+def on_addressed(message, user, target, text):
+    if text != "opme":
+        return
+    challenge, response = generate_challenge(user.nick)
+    challenges[user.nick] = (target, response)
+    bot.say(user.nick, "Your challenge for {} is {}".format(target, challenge))
 
 @bot.on("join")
 def on_join(message, user, channel):
