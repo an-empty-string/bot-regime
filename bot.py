@@ -48,7 +48,7 @@ def on_join(message, user, channel):
         logger.info("{} joins, sending challenge".format(user.nick))
         challenge, response = generate_challenge(user.nick)
         bot.say(user.nick, "CHALLENGE {} {}".format(channel, challenge))
-        challenges[user.nick][response] = target
+        challenges[user.nick][response] = channel
 
 @bot.on("private-message")
 def on_message(message, user, target, text):
