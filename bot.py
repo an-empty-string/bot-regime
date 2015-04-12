@@ -33,8 +33,9 @@ def completestr(nick, channel):
     return hashlib.sha1("{}{}{}".format(nick, channel, config.key).encode()).hexdigest()
 
 def commandtoken(nick, command):
-    timestr = str(int(time.time()) // 300)
-    return hashlib.sha1("{}{}{}{}".format(timestr, nick, command, config.key).encode()).hexdigest()
+    timenow = int(time.time()) // 300
+    for i in range(-1, 2):
+    return [hashlib.sha1("{}{}{}{}".format(str(i + timenow), nick, command, config.key).encode()).hexdigest() for i in range(-1, 2)]
 
 challenges = {}
 done = []
@@ -43,8 +44,8 @@ done = []
 def on_addressed(message, user, target, text):
     split = text.split()
     command, token, args = split[0], split[1], split[2:]
-    valid_token = commandtoken(user.nick, ":".join([command, ",".join(args)]))
-    if valid_token != token:
+    valid_tokens = commandtoken(user.nick, ":".join([command, ",".join(args)]))
+    if token not in valid_tokens:
         return
     if command == "opme":
         bot.writeln("MODE {} +o {}".format(target, user.nick))
@@ -77,8 +78,8 @@ def on_pubmsg(message, user, target, text):
         return
     split = text[2:].split()
     command, token, args = split[0], split[1], split[2:]
-    valid_token = commandtoken(user.nick, ":".join([command, ",".join(args)]))
-    if valid_token != token:
+    valid_tokens = commandtoken(user.nick, ":".join([command, ",".join(args)]))
+    if token not in valid_tokens:
         return
     if command == "addchan":
         channel = args[0]
