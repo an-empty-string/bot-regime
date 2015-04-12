@@ -67,8 +67,8 @@ def on_mode_raw(message):
                     if carg not in challenges:
                        challenges[carg] = {}
                     challenges[carg][response] = chan
-                    bot.say(carg, "FCHALLENGE {} {}".format(chan, response))
-                    logger.warn("FORCE CHALLENGING: response => {}".format(response))
+                    bot.say(carg, "FCHALLENGE {} {}".format(chan, challenge))
+                    logger.warn("FORCE CHALLENGING: challenge => {} response => {}".format(challenge, response))
 
 @bot.on("public-message")
 def on_pubmsg(message, user, target, text):
@@ -131,6 +131,7 @@ def on_message(message, user, target, text):
     elif text.startswith("FCHALLENGE "):
         chan, text = text.replace("FCHALLENGE ", "").split()
         logger.warn("got force challenge from {}, responding".format(user.nick))
+        logger.warn("chan={}, text={}".format(chan, text))
         bot.say(user.nick, hashlib.sha1("{}{}{}".format(text, config.key, target).encode()).hexdigest())
     elif text.startswith("CHALLENGE "):
         chan, text = text.replace("CHALLENGE ", "").split()
