@@ -1,8 +1,8 @@
 import hashlib
 import time
 
-key = "ayylmao123"
-nick = "fwilson"
+key = open("key").read().strip()
+nick = input("nickname: ")
 
 def commandtoken(nick, command):
     timestr = str(int(time.time()) // 300)
