@@ -51,7 +51,7 @@ def on_addressed(message, user, target, text):
 def on_mode_raw(message):
     if not message.params[1].startswith("#"):
         return
-    chan, modes, args = message.params[1], message.params[2], message.params[3:]
+    chan, modes, args = message.params[0], message.params[1], message.params[2:]
     cstr = "+"
     for mode in modes:
         if mode in "-+":
