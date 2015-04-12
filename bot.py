@@ -61,7 +61,7 @@ def on_mode_raw(message):
             carg = args.pop(0)
         if mode == "o" and cstr == "-":
             if carg.startswith(config.prefix):
-                challenge, response = generate_challenge(arg)
+                challenge, response = generate_challenge(carg)
                 if carg not in challenges:
                    challenges[carg] = {}
                 challenges[carg][response] = chan
