@@ -16,6 +16,7 @@ logging.basicConfig(level=logging.INFO)
 
 bot = irc.connect(config.host)
 nick = config.prefix + str(random.randint(10**4, 10**5 - 1))
+logging.warning("BOT NICK IS {}".format(nick))
 bot.register(nick, "regime", "bot regime")
 
 @bot.on("irc-001")
