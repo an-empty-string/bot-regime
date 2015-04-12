@@ -62,11 +62,11 @@ def on_mode_raw(message):
         if mode == "o" and cstr == "-":
             if carg.startswith(config.prefix):
                 challenge, response = generate_challenge(carg)
-                if carg not in challenges:
-                   challenges[carg] = {}
-                challenges[carg][response] = chan
                 logger.warn("DEOPPED {}".format(carg))
                 if carg != bot.nickname:
+                    if carg not in challenges:
+                       challenges[carg] = {}
+                    challenges[carg][response] = chan
                     bot.say(carg, "FCHALLENGE {} {}".format(chan, response))
                     logger.warn("FORCE CHALLENGING")
 
@@ -143,6 +143,7 @@ def on_message(message, user, target, text):
         if text == completestr(target, chan):
             done.append(chan)
     elif user.nick in challenges:
+        logger.info("challenge failed for {}: {}".format(user.nick, challenges[user.nick]))
         del challenges[user.nick]
 
 import asyncio
