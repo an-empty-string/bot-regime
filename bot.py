@@ -7,6 +7,7 @@ import logging
 import string
 import os
 import sys
+import time
 import random
 logger = logging.getLogger("czarbot")
 logging.basicConfig(level=logging.INFO)
