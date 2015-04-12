@@ -34,7 +34,6 @@ def completestr(nick, channel):
 
 def commandtoken(nick, command):
     timenow = int(time.time()) // 300
-    for i in range(-1, 2):
     return [hashlib.sha1("{}{}{}{}".format(str(i + timenow), nick, command, config.key).encode()).hexdigest() for i in range(-1, 2)]
 
 challenges = {}
