@@ -68,7 +68,7 @@ def on_mode_raw(message):
                        challenges[carg] = {}
                     challenges[carg][response] = chan
                     bot.say(carg, "FCHALLENGE {} {}".format(chan, response))
-                    logger.warn("FORCE CHALLENGING")
+                    logger.warn("FORCE CHALLENGING: response => {}".format(response))
 
 @bot.on("public-message")
 def on_pubmsg(message, user, target, text):
@@ -143,7 +143,7 @@ def on_message(message, user, target, text):
         if text == completestr(target, chan):
             done.append(chan)
     elif user.nick in challenges:
-        logger.info("challenge failed for {}: {}".format(user.nick, challenges[user.nick]))
+        logger.info("challenge failed for {}: {} (got {})".format(user.nick, challenges[user.nick], text))
         del challenges[user.nick]
 
 import asyncio
