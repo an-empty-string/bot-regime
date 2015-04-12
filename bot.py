@@ -2,6 +2,7 @@ from asyncirc import irc
 import asyncirc.plugins.addressed
 
 import config
+import functools
 import hashlib
 import logging
 import string
@@ -9,6 +10,7 @@ import os
 import sys
 import time
 import random
+
 logger = logging.getLogger("czarbot")
 logging.basicConfig(level=logging.INFO)
 
@@ -77,8 +79,8 @@ def on_pubmsg(message, user, target, text):
         quitdelay = random.randint(0, 60)
         bot.say(target, "ok, waiting {} seconds to restart".format(quitdelay))
         time.sleep(quitdelay)
-        bot.writeln("QUIT :restart triggered")
-        asyncio.get_event_loop().stop()
+        asyncio.get_event_loop().call_later(quitdelay, functools.partial(bot.writeln, "QUIT :restart triggered"))
+        asyncio.get_event_loop().call_later(quitdelay, functools.partial(os.execv, sys.executable, [sys.executable] + sys.argv)
 
 @bot.on("join")
 def on_join(message, user, channel):
