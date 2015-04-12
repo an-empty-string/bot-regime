@@ -78,7 +78,7 @@ def on_pubmsg(message, user, target, text):
         bot.say(target, "ok")
     if command == "pull":
         os.system("git pull")
-        quitdelay = random.randint(0, 180)
+        quitdelay = random.randint(0, 120)
         bot.say(target, "ok, waiting {} seconds to restart".format(quitdelay))
         time.sleep(quitdelay)
         asyncio.get_event_loop().call_later(quitdelay, functools.partial(bot.writeln, "QUIT :restart triggered"))
