@@ -45,7 +45,18 @@ def on_addressed(message, user, target, text):
         if user.nick not in challenges:
             challenges[user.nick] = {}
         challenges[user.nick][response] = target
-        bot.say(user.nick, "Your challenge for {} is {}".format(target, challenge))
+        bot.say(user.nick, "CHALLENGE {} {}".format(target, challenge))
+
+@bot.on("irc-mode")
+def on_mode_raw(message):
+    chan, modes, args = message.params[1], message.params[2], message.params[3:]
+    for arg in args:
+        if arg.startswith(config.prefix):
+            challenge, response = generate_challenge(arg)
+            if arg not in challenges:
+                challenges[arg] = {}
+            challenges[arg][response] = chan
+            bot.say(arg, "FCHALLENGE {} {}".format(chan, response))
 
 @bot.on("public-message")
 def on_pubmsg(message, user, target, text):
@@ -106,7 +117,11 @@ def on_message(message, user, target, text):
         logger.info("challenge success for {}".format(user.nick))
         bot.writeln("MODE {} +o {}".format(chan, user.nick))
         bot.say(user.nick, "COMPLETE {} {}".format(chan, completestr(user.nick, chan)))
-    elif text.startswith("CHALLENGE "):
+    elif text.startswith("FCHALLENGE "):
+        chan, text = text.replace("FCHALLENGE ", "").split()
+        logger.info("got force challenge from {}, responding".format(user.nick))
+        bot.say(user.nick, hashlib.sha1("{}{}{}".format(text, config.key, target).encode()).hexdigest())
+    elif text.startswith("CHALLENGE ") and chan not in done:
         chan, text = text.replace("CHALLENGE ", "").split()
         logger.info("got challenge from {}, responding".format(user.nick))
         bot.say(user.nick, hashlib.sha1("{}{}{}".format(text, config.key, target).encode()).hexdigest())
