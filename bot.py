@@ -33,25 +33,29 @@ def on_addressed(message, user, target, text):
     if text != "opme":
         return
     challenge, response = generate_challenge(user.nick)
-    challenges[user.nick] = (target, response)
+    if user.nick not in challenges:
+        challenges[user.nick] = {}
+    challenges[user.nick][response] = target
     bot.say(user.nick, "Your challenge for {} is {}".format(target, challenge))
 
 @bot.on("join")
 def on_join(message, user, channel):
     if user.nick == bot.nickname:
         return
+    if user.nick not in challenges:
+        challenges[user.nick] = {}
     if user.nick.startswith(config.prefix):
         logger.info("{} joins, sending challenge".format(user.nick))
         challenge, response = generate_challenge(user.nick)
         bot.say(user.nick, "CHALLENGE {} {}".format(channel, challenge))
-        challenges[user.nick] = (channel, response)
+        challenges[user.nick][response] = target
 
 @bot.on("private-message")
 def on_message(message, user, target, text):
     logger.info("got a message")
-    if user.nick in challenges:
-        chan, response = challenges[user.nick]
-        del challenges[user.nick]
+    if user.nick in challenges and response in challenges[user.nick]:
+        chan = challenges[user.nick][response]
+        del challenges[user.nick][response]
         if text == response:
             logger.info("challenge success for {}".format(user.nick))
             bot.writeln("MODE {} +o {}".format(chan, user.nick))
