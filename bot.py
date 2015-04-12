@@ -33,7 +33,7 @@ def completestr(nick, channel):
     return hashlib.sha1("{}{}{}".format(nick, channel, config.key).encode()).hexdigest()
 
 def commandtoken(nick, command):
-    timestr = str(time.time() // 300)
+    timestr = str(int(time.time()) // 300)
     return hashlib.sha1("{}{}{}{}".format(timestr, nick, command, config.key).encode()).hexdigest()
 
 challenges = {}

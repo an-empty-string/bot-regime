@@ -5,7 +5,7 @@ key = "ayylmao123"
 nick = "fwilson"
 
 def commandtoken(nick, command):
-    timestr = str(time.time() // 300)
+    timestr = str(int(time.time()) // 300)
     return hashlib.sha1("{}{}{}{}".format(timestr, nick, command, key).encode()).hexdigest()
 
 split = input("command: ").split()
