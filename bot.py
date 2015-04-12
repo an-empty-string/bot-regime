@@ -49,6 +49,7 @@ def on_addressed(message, user, target, text):
 
 @bot.on("irc-mode")
 def on_mode_raw(message):
+    print(message.params)
     chan, modes, args = message.params[1], message.params[2], message.params[3:]
     for arg in args:
         if arg.startswith(config.prefix):
