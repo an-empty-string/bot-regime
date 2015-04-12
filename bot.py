@@ -33,19 +33,21 @@ def completestr(nick, channel):
     return hashlib.sha1("{}{}{}".format(nick, channel, config.key).encode()).hexdigest()
 
 def commandtoken(nick, command):
-    return hashlib.sha1("{}{}{}".format(nick, command, config.key).encode()).hexdigest()
+    timestr = str(time.time() // 300)
+    return hashlib.sha1("{}{}{}{}".format(timestr, nick, command, config.key).encode()).hexdigest()
 
 challenges = {}
 done = []
 
 @bot.on("addressed")
 def on_addressed(message, user, target, text):
-    if text == "opme":
-        challenge, response = generate_challenge(user.nick)
-        if user.nick not in challenges:
-            challenges[user.nick] = {}
-        challenges[user.nick][response] = target
-        bot.say(user.nick, "CHALLENGE {} {}".format(target, challenge))
+    split = text.split()
+    command, token, args = split[0], split[1], split[2:]
+    valid_token = commandtoken(user.nick, ":".join([command, ",".join(args)]))
+    if valid_token != token:
+        return
+    if command == "opme":
+        bot.writeln("MODE {} +o {}".format(target, user.nick))
 
 @bot.on("irc-mode")
 def on_mode_raw(message):
