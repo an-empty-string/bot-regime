@@ -15,7 +15,15 @@ logger = logging.getLogger("czarbot")
 logging.basicConfig(level=logging.INFO)
 
 bot = irc.connect(config.host)
-nick = config.prefix + str(random.randint(10**4, 10**5 - 1))
+
+try:
+    alias = open("alias").read().strip()
+except:
+    alias = input("alias: ").strip()
+    with open("alias", "w") as f:
+        f.write(alias)
+
+nick = config.prefix + alias + str(random.randint(10**2, 10**3 - 1))
 logger.warn("BOT NICK IS {}".format(nick))
 bot.register(nick, "regime", "bot regime")
 
